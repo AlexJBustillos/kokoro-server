@@ -25,3 +25,5 @@ db.on('error', (error) => {
 
 
 module.exports.User = require('./User');
+module.exports.Profile = require('./Profile');
+module.exports.Journal = require('./Journal');
