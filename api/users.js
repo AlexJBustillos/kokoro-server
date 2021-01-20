@@ -28,7 +28,8 @@ router.post('/register', (req, res) => {
             const newUser = new User({
                 name: req.body.name,
                 email: req.body.email,
-                password: req.body.password
+                password: req.body.password,
+                avatar: null
             });
             // Salt and hash pw then save user
             bcrypt.genSalt(10, (err, salt) => {
@@ -69,7 +70,8 @@ router.post('/login', (req, res) => {
                     const payload = {
                         id: user.id,
                         email: user.email,
-                        name: user.name
+                        name: user.name,
+                        avatar: user.avatar
                     };
                     // Sign token
                     // 3600000 is one hour
@@ -92,7 +94,8 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
     res.json({
         id: req.user.id,
         name: req.user.name,
-        email: req.user.email
+        email: req.user.email,
+        avatar: req.user.avatar
     });
 });
 
