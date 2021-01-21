@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 8000;
 
 // API
 const users = require('./api/users');
-// const profiles = require('./api/profiles');
-// const journals = require('./api/journals');
+const profiles = require('./api/profiles');
+const journals = require('./api/journals');
 
 // MIddleware
 app.use(cors());
@@ -22,9 +22,10 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/users', users);
-// app.use('/api/profiles', profiles);
-// app.use('/api/journals', journals);
+app.use('/api/profiles', profiles);
+app.use('/api/journals', journals);
 
 app.listen(PORT, () => {
     console.log(`Server is listening on ${PORT}`);
 });
+
