@@ -22,7 +22,7 @@ const db = require('../models');
 //     }
 // });
 // Create POST route for profiles/:id
-router.post('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.post('/:id', async (req, res) => {
     try {
         const newProfile = await db.Profile.create({
             user: req.params.id,

@@ -9,7 +9,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Models
 const db = require('../models');
-const JWT_SECRET = process.env.JWT_SECRET
 
 // GET api/users/test (Public)
 // router.get('/test', (req, res) => {
@@ -17,48 +16,81 @@ const JWT_SECRET = process.env.JWT_SECRET
 // });
 
 // POST api/users/register (Public)
-router.post('/signup', async (req, res) => {
-    try {
-        // Find user by email
-        const currentUser = await db.User.findOne({ 
-            email: req.body.email
-        })
-        if (currentUser) {
-            // if email already exists, send a 400 response
-            return res.status(400).json({ msg: 'Email already exists' });
+router.post('/register', (req, res)=>{
+    //Find user by email
+    db.User.findOne({ email: req.body.email})
+    .then(user =>{
+        //If email already exist we want to send a 400 response
+        if (user) {
+            return res.status(400).json({ msg: 'Email already exist'})
         } else {
-            // Create a new user
+            //Create a new user
             const newUser = new db.User({
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
                 firstTimeUser: true,
-                avatar: null
+                avatar: null,
+
             });
-            // Create salt for password
-            bcrypt.genSalt(10, (error, salt) => {
-                if (error) throw Error
-                // Hash Password with salt
-                bcrypt.hash(newUser.password, salt, async (error, hash) => {
-                    try {
-                        if (error) throw Error
-                        // Change pw to the hash version
-                        newUser.password = hash
-                        // Save new user with hashed pw
-                        const createdUser = await newUser.save()
-                        res.status(200).json({
-                            user: createdUser
-                        })
-                    } catch(error) {
-                        res.status(400).json({msg: error})
-                    }
+            //Salt and has password, then save the user
+            bcrypt.genSalt(10, (err, salt) => {
+                if (err) throw Error;
+
+                bcrypt.hash(newUser.password, salt, (error, hash) =>{
+                    if (error) throw Error;
+                    //Change password in newUser to hash
+                    newUser.password = hash;
+                    newUser.save()
+                    .then(createdUser => res.json(createdUser))
+                    .catch(err => console.log(err));
                 })
             })
         }
-    } catch(error) {
-        res.status(400).json({msg: error})
-    }
+    })
 })
+// router.post('/signup', async (req, res) => {
+//     try {
+//         // Find user by email
+//         const currentUser = await db.User.findOne({ 
+//             email: req.body.email
+//         })
+//         if (currentUser) {
+//             // if email already exists, send a 400 response
+//             return res.status(400).json({ msg: 'Email already exists' });
+//         } else {
+//             // Create a new user
+//             const newUser = new db.User({
+//                 name: req.body.name,
+//                 email: req.body.email,
+//                 password: req.body.password,
+//                 firstTimeUser: true,
+//                 avatar: null
+//             });
+//             // Create salt for password
+//             bcrypt.genSalt(10, (error, salt) => {
+//                 if (error) throw Error
+//                 // Hash Password with salt
+//                 bcrypt.hash(newUser.password, salt, async (error, hash) => {
+//                     try {
+//                         if (error) throw Error
+//                         // Change pw to the hash version
+//                         newUser.password = hash
+//                         // Save new user with hashed pw
+//                         const createdUser = await newUser.save()
+//                         res.status(200).json({
+//                             user: createdUser
+//                         })
+//                     } catch(error) {
+//                         res.status(400).json({msg: error})
+//                     }
+//                 })
+//             })
+//         }
+//     } catch(error) {
+//         res.status(400).json({msg: error})
+//     }
+// })
 
 
     
