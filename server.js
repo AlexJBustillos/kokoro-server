@@ -16,6 +16,7 @@ const journals = require('./api/journals');
 app.use(cors());
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
+app.use(passport.initialize())
 
 app.get('/', (req, res) => {
     res.status(200).json({ message: 'Smile, you are being watched by the Backend Engineerin Team'})
