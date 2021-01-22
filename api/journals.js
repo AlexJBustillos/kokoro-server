@@ -7,13 +7,12 @@ const passport = require('passport');
 const db = require('../models');
 
 router.post('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { likes, comments } = req.body
+    const { comments } = req.body
     try {
         const newJournal = await db.Journal.create({
             user: req.params.id,
             text: req.body.text,
             name: req.body.name,
-            likes: likes,
             comments: comments
         })
         res.status(200).json({journal: newJournal})
