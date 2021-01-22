@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 // Journal Schema
 const journalSchema = new Schema ({
     user: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     text: {
         type: String,
@@ -13,16 +14,6 @@ const journalSchema = new Schema ({
     name: {
         type: String
     },
-    avatar: {
-        type: String
-    },
-    likes: [
-        {
-            user: {
-                type: Schema.Types.ObjectId
-            }
-        }
-    ],
     comments: [
         {
             user: {
