@@ -38,10 +38,10 @@ router.post('/:id', async (req, res) => {
 });
 
 // GET route for profiles/:id
-router.get('/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
-        const currentProfile = await db.Profile.findOne({
-            _id: req.params.id
+        const currentProfile = await db.Profile.find({
+            user: req.params.id
         })
         res.status(200).json({profile: currentProfile})
     } catch (error) {
@@ -50,7 +50,7 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), async (req, r
 });
 
 // create PUT route for profiles/:id
-router.put('/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
+router.put('/:id', async (req, res) => {
     try {
         const updateProfile = await db.Profile.updateOne(
             {_id: req.params.id},
@@ -68,7 +68,7 @@ router.put('/:id', passport.authenticate('jwt', {session: false}), async (req, r
 })
 
 // create delete route for profiles/:id
-router.delete('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         await db.Profile.deleteOne({_id: req.params.id})
         res.status(200).json({msg: 'Profile deleted'})
