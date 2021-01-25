@@ -52,15 +52,18 @@ router.get('/:id', async (req, res) => {
 // create PUT route for profiles/:id
 router.put('/:id', async (req, res) => {
     try {
-        const updateProfile = await db.Profile.updateOne(
-            {_id: req.params.id},
+        console.log(req);
+        const updateProfile = await db.Profile.findOneAndUpdate(
+            {user: req.params.id},
             {$set: {
                 status: req.body.status,
                 meditation: req.body.meditation,
                 experience: req.body.experience,
                 bio: req.body.bio  
-            }}
+            }},
+            {new: true, upsert: true}
         )
+        console.log(updateProfile);
         res.status(200).json({profile: updateProfile})
     } catch (error) {
         res.status(400).json({msg: error})
@@ -68,13 +71,13 @@ router.put('/:id', async (req, res) => {
 })
 
 // create delete route for profiles/:id
-router.delete('/:id', async (req, res) => {
-    try {
-        await db.Profile.deleteOne({_id: req.params.id})
-        res.status(200).json({msg: 'Profile deleted'})
-    } catch (error) {
-        res.status(400).json({msg: error})
-    }
-});
+// router.delete('/:id', async (req, res) => {
+//     try {
+//         await db.Profile.deleteOne({_id: req.params.id})
+//         res.status(200).json({msg: 'Profile deleted'})
+//     } catch (error) {
+//         res.status(400).json({msg: error})
+//     }
+// });
 
 module.exports = router;
