@@ -149,39 +149,34 @@ router.get('/:id',async (req, res) => {
 });
 
 // PUT route for users/:id (Private)
-router.put('/:id', (req, res) => {
-    console.log(req)
-    db.User.findOneAndUpdate(
-        {_id: req.params.userID},
-        {email: req.body.email, name: req.body.name, avatar: req.body.avatar},
-        {
-            upsert: true
-        }
-    ).then(
-        res=>{
-            console.log("succsessful", res)
-        }
-    )
-    // const { firstTimeUser, newName, newAvatar } = req.body
-    // if (firstTimeUser === false) {
-    //     try {
-    //         const updatedUser = await db.User.updateOne(
-    //             {_id: req.params.id},
-    //             {$set: {firstTimeUser: firstTimeUser}}
-    //         )
-    //         res.status(200).json({user: updatedUser})
-    //     } catch(error) {
-    //         res.status(400).json({msg: error})
+router.put('/:id', async (req, res) => {
+    try {
+        const updateUser = await db.User.findOneAndUpdate(
+            {_id: req.params.id},
+            {$set: {
+                name: req.body.name,
+                email: req.body.email,
+                avatar: req.body.avatar
+            }},
+            {new: true, upsert: true}
+        )
+        console.log(updateUser);
+        res.status(200).json({user: updateUser})
+    } catch (error) {
+        res.status(400).json({msg: error})
+    }
+    // console.log(req)
+    // db.User.findOneAndUpdate(
+    //     {_id: req.params.userID},
+    //     {email: req.body.email, name: req.body.name, avatar: req.body.avatar},
+    //     {
+    //         upsert: true
     //     }
-    // } else {
-    //     try {
-    //         const updatedUser = await db.User.updateOne(
-    //             {_id: req.params.id},
-    //             {$set: {name: newName, avatar: newAvatar}}
-    //         )
-    //         res.status(200).json({user: updatedUser})
-    //     } catch (error) {
-    //         res.status(400).json({msg: error})
+    // ).then(
+    //     res=>{
+    //         console.log("succsessful", res)
+    //     }
+    // )
 
 })
 
