@@ -20,7 +20,7 @@ const userSchema = new Schema ({
         required: true,
         minlength: 8,
     },
-    firstTimeUser: Boolean,
+    firstTimeUser: Boolean, 
     avatar: {
         type: String
     },
