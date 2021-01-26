@@ -137,7 +137,7 @@ router.post('/login',  async (req, res) => {
 })
 
 // GET api/users/:id (Private)
-router.get('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.get('/:id',async (req, res) => {
     try {
         const currentUser = await db.User.findOne({
             _id: req.params.id
@@ -149,33 +149,44 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), async (req,
 });
 
 // PUT route for users/:id (Private)
-router.put('/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
-    const { firstTimeUser, newName, newAvatar } = req.body
-    if (firstTimeUser === false) {
-        try {
-            const updatedUser = await db.User.updateOne(
-                {_id: req.params.id},
-                {$set: {firstTimeUser: firstTimeUser}}
-            )
-            res.status(200).json({user: updatedUser})
-        } catch(error) {
-            res.status(400).json({msg: error})
+router.put('/:id', (req, res) => {
+    console.log(req)
+    db.User.findOneAndUpdate(
+        {_id: req.params.userID},
+        {email: req.body.email, name: req.body.name, avatar: req.body.avatar},
+        {
+            upsert: true
         }
-    } else {
-        try {
-            const updatedUser = await db.User.updateOne(
-                {_id: req.params.id},
-                {$set: {name: newName, avatar: newAvatar}}
-            )
-            res.status(200).json({user: updatedUser})
-        } catch (error) {
-            res.status(400).json({msg: error})
+    ).then(
+        res=>{
+            console.log("succsessful", res)
         }
-    }
+    )
+    // const { firstTimeUser, newName, newAvatar } = req.body
+    // if (firstTimeUser === false) {
+    //     try {
+    //         const updatedUser = await db.User.updateOne(
+    //             {_id: req.params.id},
+    //             {$set: {firstTimeUser: firstTimeUser}}
+    //         )
+    //         res.status(200).json({user: updatedUser})
+    //     } catch(error) {
+    //         res.status(400).json({msg: error})
+    //     }
+    // } else {
+    //     try {
+    //         const updatedUser = await db.User.updateOne(
+    //             {_id: req.params.id},
+    //             {$set: {name: newName, avatar: newAvatar}}
+    //         )
+    //         res.status(200).json({user: updatedUser})
+    //     } catch (error) {
+    //         res.status(400).json({msg: error})
+
 })
 
 //Create delete route for user
-router.delete('/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
+router.delete('/:id',async (req, res) => {
     try {
         await db.Profile.deleteOne({user: req.params.id})
         await db.Journal.deleteMany({user: req.params.id})
