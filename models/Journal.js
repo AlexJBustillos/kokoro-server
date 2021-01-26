@@ -11,7 +11,7 @@ const journalSchema = new Schema ({
         type: String,
         required: true
     },
-    name: {
+    title: {
         type: String
     },
     comments: [
@@ -37,7 +37,6 @@ const journalSchema = new Schema ({
     ],
     date: {
         type: Date,
-        default: Date.now
     }
 });
 
