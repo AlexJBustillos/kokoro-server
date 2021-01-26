@@ -1,19 +1,19 @@
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
-// const { check, validationResult } = require('express-validator');
 const passport = require('passport');
 
 const db = require('../models');
 
-router.post('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.post('/:id', async (req, res) => {
     const { comments } = req.body
     try {
         const newJournal = await db.Journal.create({
             user: req.params.id,
             text: req.body.text,
-            name: req.body.name,
-            comments: comments
+            title: req.body.title,
+            comments: comments,
+            date: Date.parse(req.body.date)
         })
         res.status(200).json({journal: newJournal})
     } catch (error) {
@@ -22,7 +22,7 @@ router.post('/:id', passport.authenticate('jwt', { session: false }), async (req
 })
 
 // GET route for all journals/all/:id
-router.get('/all/:id', passport.authenticate('jwt', { session: false }),  async (req, res) => {
+router.get('/all/:id', async (req, res) => {
     try {
         const allJournals = await db.Journal.find({
             user: req.params.id
@@ -34,7 +34,7 @@ router.get('/all/:id', passport.authenticate('jwt', { session: false }),  async 
 })
 
 // GET route for journals/:id
-router.get('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const currentJournal = await db.Journal.findOne({
             _id: req.params.id
@@ -46,14 +46,16 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), async (req,
 })
 
 // PUT route for journals/:id
-router.put('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.put('/update/:id', async (req, res) => {
     try {
+        console.log(req);
         const updateJournal = await db.Journal.updateOne(
             {_id: req.params.id},
             {$set: {
                 text: req.body.text,
-                name: req.body.name,
-                comments: req.body.comments
+                title: req.body.title,
+                comments: req.body.comments,
+                date: Date.parse(req.body.date)
             }}
         )
         res.status(200).json({journal: updateJournal})
@@ -62,7 +64,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), async (req,
     }
 })
 
-router.delete('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         await db.Journal.deleteOne({_id: req.params.id})
         res.status(200).json({msg: 'Journal Deleted'})
